@@ -633,11 +633,12 @@ function loadTXT(){
 
      }      
 
-function addSpline(olat,olng,tlat,tlng){
+function addSpline(olat,olng,tlat,tlng,type){
 	var origin=translateGeoCoords(olat,olng,5);
     var target=translateGeoCoords(tlat,tlng,50);
 
-   
+   //type 0-ok,1-no
+
     //var mid_phi = origin_phi + ( origin_phi - target_phi )/2;
     //var mid_theta = origin_theta + ( origin_theta-target_theta ) / 2;
    // var mid_x = radius * Math.sin(mid_phi) * Math.cos(mid_theta);
@@ -658,10 +659,22 @@ function addSpline(olat,olng,tlat,tlng){
         var position = spline.getPoint( i );
         splineGeometry.vertices[ i ] = new THREE.Vector3( position.x, position.y, position.z );
     }
+if (type=1) {
 
-    var color = new THREE.Color( 0xffffff );
+	var color = new THREE.Color( 0xffffff );
    
     var material = new THREE.LineBasicMaterial( { color: 0x00fff00, opacity: 1, linewidth: 1 } );
+
+
+};
+  if (type=0) {
+
+	var color = new THREE.Color( 0x4a4a4a );
+   
+    var material = new THREE.LineBasicMaterial( { color: 0x4a4a4a, opacity: 1, linewidth: 9 } );
+
+
+};  
     var line = new THREE.Line( splineGeometry,  material );
     return line
 }
@@ -670,13 +683,13 @@ function addSpline(olat,olng,tlat,tlng){
      var test=$("#test");
      function SetTimeGPS(){
      	//add gps type=1
-		var randomGPS=GPSRandom(-80.8154296875,-0.1428221177,_gpsNums);
+		var randomGPS=GPSRandom(-0.1428221177,-80.8154296875,_gpsNums);
 
 		var tnt=self.setInterval(clock,_time);
 		var i = randomGPS.length - 1;
 		function clock() {
-			var line=addSpline(randomGPS[i].lon,randomGPS[i].lat,-0.1428221177,-80.8154296875);
-			var pos=translateGeoCoords(randomGPS[i].lon, randomGPS[i].lat,5);
+			var line=addSpline(randomGPS[i].lat,randomGPS[i].lon,-0.1428221177,-80.8154296875,0);
+			var pos=translateGeoCoords(randomGPS[i].lat,randomGPS[i].lon,5);
 			var marker=marker3D(pos,1);
 			marker.lookAt(group.position);
 			group.add(marker);
@@ -711,7 +724,7 @@ function addSpline(olat,olng,tlat,tlng){
 			var p=nums;
 
 		 
-			var maxdist=200;	//移动距离	km	 
+			var maxdist=6000;	//移动距离	km	 
 			
 			
 		// circular
