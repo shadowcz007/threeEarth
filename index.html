@@ -494,7 +494,7 @@ function loadTXT(){
                     
                     dataType: 'text',
                     success: function(data) {
-                        alert(data);
+                        //alert(data);
                              var loadedDataArray = data.split('\n');
                              var l = loadedDataArray.length;  
                                                     
@@ -652,7 +652,7 @@ function addSpline(olat,olng,tlat,tlng,type){
 //    points.push(new THREE.Vector3( mid_x, mid_y, mid_z ));
     points.push(new THREE.Vector3( target.x, target.y, target.z ));
 
-    var spline = new THREE.SplineCurve3( points );
+    var spline = new THREE.CatmullRomCurve3( points );
 
     for (i = 0; i < points.length; i++)
     {
@@ -663,7 +663,7 @@ if (type=1) {
 
 	var color = new THREE.Color( 0xffffff );
    
-    var material = new THREE.LineBasicMaterial( { color: 0x00fff00, opacity: 1, linewidth: 1 } );
+    var material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.1, linewidth: 0.1 } );
 
 
 };
@@ -724,7 +724,7 @@ if (type=1) {
 			var p=nums;
 
 		 
-			var maxdist=6000;	//移动距离	km	 
+			var maxdist=1000;	//移动距离	km	 
 			
 			
 		// circular
