@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script src="js/libs/jquery.min.js"></script>
+        <script src="js/libs/esl.js"></script>
+        <script src="js/libs/config.js"></script>
+       
+        <script src="js/libs/dat.gui.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+                background-color: rgb(51, 51, 51);
+            }
+
+            #throughput{
+                position: absolute;
+                top: 5%;
+                left:5%;
+                width: 18%;
+                height: 90%;
+            }
+             #throughput1{
+             
+                top: 0;
+                left: 0;
+                width: 100%;
+                height:25%;
+            }
+             #throughput2{
+           
+                top:0;
+                left: 0;
+                width: 100%;
+                height:25%;
+            }
+             #throughput3{
+            
+                top:0;
+                left: 0;
+                width:100%;
+                height: 25%;
+            }
+            #throughput4{
+              
+                top: 0;
+                left: 0;
+                width:100%;
+                height:25%;
+            }
+            #throughputTime{
+                position: absolute;
+                top: 5%;
+                left: 25%;
+                width: 75%;
+                height:90%;
+
+            }
+            .all{
+                width: 100%;
+                height: 100%;
+            }
+            .tilte{
+                position: absolute;
+                color: white;
+                z-index: 2;
+                padding-left: 12px
+
+            }
+            #title1{
+                position: absolute;
+                color: white;
+                z-index: 2;
+            }
+            #title2{
+                position: absolute;
+                color: white;
+                z-index: 2;
+                top: 25%;
+            }
+            #title3{
+                position: absolute;
+                color: white;
+                z-index: 2;
+                top: 50%;
+            }
+            #title4{
+                position: absolute;
+                color: white;
+                z-index: 2;
+                top: 75%;
+            }
+        </style>
+        <div id="throughput">
+            <h3 id="title1" class="tilte">ID1</h3>
+            <h3 id="title2" class="tilte">ID2</h3>
+            <h3 id="title3" class="tilte">ID3</h3>
+            <h3 id="title4" class="tilte">ID4</h3>
+            <div id="throughput1" class="all"></div>
+            <div id="throughput2" class="all"></div>
+            <div id="throughput3" class="all"></div>
+            <div id="throughput4" class="all"></div>
+        </div>
+            <div id="throughputTime"></div>
+
+
+        <script>
+          
+            require([
+                'echarts',
+                'echarts/chart/gauge',
+                'echarts/chart/line',
+                'echarts/component/legend',
+                'echarts/component/grid',
+                'echarts/component/dataZoom',
+                'echarts/component/tooltip',
+                'echarts/component/title',
+                'echarts/theme/dark'
+            ], function (echarts) {
+                
+                var charts={};
+
+                 
+
+                charts.throughput1 = echarts.init(document.getElementById('throughput1'), 'dark', {
+                    renderer: 'canvas'
+                });
+                charts.throughput2 = echarts.init(document.getElementById('throughput2'), 'dark', {
+                    renderer: 'canvas'
+                });
+                charts.throughput3 = echarts.init(document.getElementById('throughput3'), 'dark', {
+                    renderer: 'canvas'
+                });
+                charts.throughput4 = echarts.init(document.getElementById('throughput4'), 'dark', {
+                    renderer: 'canvas'
+                });
+
+
+                charts.throughputTime = echarts.init(document.getElementById('throughputTime'), 'dark', {
+                    renderer: 'canvas'
+                });
+                
+                
+                var date = [];                
+                
+                var _flow1 = [];
+                var _flow2 = [];
+                var _flow3 = [];
+                var _flow4 = [];
+
+                var option={};
+
+                option.throughput= {
+                         //   backgroundColor: '#1b1b1b',
+                            tooltip : {
+                                formatter: '{a} <br/>{c} {b}'
+                            },
+                            toolbox: {
+                                show : true,
+                                feature : {
+                                    mark : {show: true},
+                                    restore : {show: true},
+                                    saveAsImage : {show: true}
+                                }
+                            },
+                           series : [
+                                {
+                                    name:'流量',
+                                    type:'gauge',
+                                    min:0,
+                                    max:2480000,
+                                    splitNumber:1,
+                                    radius: '80%',
+                                    axisLine: {            // 坐标轴线
+                                        lineStyle: {       // 属性lineStyle控制线条样式
+                                            color: [[0.09, 'lime'],[0.82, '#1e90ff'],[1, '#ff4500']],
+                                            width: 3,
+                                            shadowColor : '#fff', //默认透明
+                                            shadowBlur: 10
+                                        }
+                                    },
+                                    axisLabel: {            // 坐标轴小标记
+                                        textStyle: {       // 属性lineStyle控制线条样式
+                                            fontWeight: 'bolder',
+                                            fontSize:12,
+                                            color: '#fff',
+                                            shadowColor : '#fff', //默认透明
+                                            shadowBlur: 10
+                                        }
+                                    },
+                                    axisTick: {            // 坐标轴小标记
+                                        length :15,        // 属性length控制线长
+                                        lineStyle: {       // 属性lineStyle控制线条样式
+                                            color: 'auto',
+                                            shadowColor : '#fff', //默认透明
+                                            shadowBlur: 10
+                                        }
+                                    },
+                                    splitLine: {           // 分隔线
+                                        length :25,         // 属性length控制线长
+                                        lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                                            width:3,
+                                            color: '#fff',
+                                            shadowColor : '#fff', //默认透明
+                                            shadowBlur: 10
+                                        }
+                                    },
+                                    pointer: {           // 分隔线
+                                        shadowColor : '#fff', //默认透明
+                                        shadowBlur: 5
+                                    },
+                                    title : {
+                                        textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                                            fontWeight: 'bolder',
+                                            fontSize: 20,
+                                            fontStyle: 'italic',
+                                            color: '#fff',
+                                            shadowColor : '#fff', //默认透明
+                                            shadowBlur: 10
+                                        }
+                                    },
+                                    detail : {
+                                      //  backgroundColor: 'rgba(0,0,0,0.5)',
+                                        borderWidth: 0,
+                                        borderColor: '#fff',
+                                        shadowColor : '#fff', //默认透明
+                                        shadowBlur: 5,
+                                        offsetCenter: [0, '100%'],       // x, y，单位px
+                                        textStyle: {       // 其余属性默认使用全局文本样式，详见TEXTSTYLE
+                                            fontWeight: 'bolder',
+                                            color: '#fff',
+                                            fontSize:24
+                                        }
+                                    },
+                                    data:[{value:100340, name: 'Kbps'}]
+                                }  
+                            ]  
+                        };
+
+                    option.throughputTime  = {
+                        tooltip: {
+                            trigger: 'axis',
+                            position: function (pt) {
+                                return [pt[0], '10%'];
+                            }
+                        },
+                        title: {
+                            left: 'center',
+                            text: '实时流量',
+                        },
+                        legend: {
+                            top: 'bottom',
+                            data:_flow1
+                        },
+                        toolbox: {
+                            feature: {
+                                dataZoom: {
+                                    yAxisIndex: 'none'
+                                },
+                                restore: {},
+                                saveAsImage: {}
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: date
+                        },
+                        yAxis: {
+                            type: 'value',
+                            boundaryGap: [0, '100%']
+                        },
+                        dataZoom: [{
+                            type: 'inside',
+                            start: 40,
+                            end: 100
+                        }, {
+                            start: 0,
+                            end: 10,
+                            handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                            handleSize: '80%',
+                            handleStyle: {
+                                color: '#fff',
+                                shadowBlur: 3,
+                                shadowColor: 'rgba(0, 0, 0, 0.6)',
+                                shadowOffsetX: 2,
+                                shadowOffsetY: 2
+                            }
+                        }],
+                        series: [
+                            {
+                                name:'ID1',
+                                type:'line',
+                                smooth:true,
+                                symbol: 'none',
+                                sampling: 'average',
+                                itemStyle: {
+                                    normal: {
+                                        color: 'rgb(255, 70, 131)'
+                                    }
+                                },
+                                areaStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0,  0.1, [{
+                                            offset: 0,
+                                            color: 'rgb(255, 158, 68)'
+                                        }, {
+                                            offset: 1,
+                                            color: 'rgb(255, 70, 131)'
+                                        }])
+                                    }
+                                },
+                                data: _flow1
+                            },
+                            {
+                                name:'ID2',
+                                type:'line',
+                                smooth:true,
+                                symbol: 'none',
+                                sampling: 'average',
+                                itemStyle: {
+                                    normal: {
+                                        color: 'rgb(68, 205, 255)'
+                                    }
+                                },
+                                areaStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 0.5, [{
+                                            offset: 0,
+                                            color: 'rgb(68, 205, 255)'
+                                        }, {
+                                            offset: 1,
+                                            color: 'rgb(70, 152, 255)'
+                                        }])
+                                    }
+                                },
+                                data: _flow2
+                            },
+                            {
+                                name:'ID3',
+                                type:'line',
+                                smooth:true,
+                                symbol: 'none',
+                                sampling: 'average',
+                                itemStyle: {
+                                    normal: {
+                                        color: 'rgb(255, 242, 68)'
+                                    }
+                                },
+                                areaStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0,  0, [{
+                                            offset: 0,
+                                            color: 'rgb(255, 242, 68)'
+                                        }, {
+                                            offset: 1,
+                                            color: 'rgb(244, 255, 70)'
+                                        }])
+                                    }
+                                },
+                                data: _flow3
+                            },{
+                                name:'ID4',
+                                type:'line',
+                                smooth:true,
+                                symbol: 'none',
+                                sampling: 'average',
+                                itemStyle: {
+                                    normal: {
+                                        color: 'rgb(68, 255, 107)'
+                                    }
+                                },
+                                areaStyle: {
+                                    normal: {
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 0, [{
+                                            offset: 0,
+                                            color: 'rgb(68, 255, 107)'
+                                        }, {
+                                            offset: 1,
+                                            color: 'rgb(70, 255,76)'
+                                        }])
+                                    }
+                                },
+                                data: _flow4
+                            }
+                        ]
+                    };
+                    console.log(option.throughputTime);
+            //    option.throughput1 =data:[{value:100340, name: 'bps'}]}]};
+
+                charts.throughput1.setOption( option.throughput);
+                charts.throughput2.setOption( option.throughput);
+                charts.throughput3.setOption( option.throughput);
+                charts.throughput4.setOption( option.throughput);
+                charts.throughputTime.setOption( option.throughputTime);   
+
+
+
+            function throughputData(){
+                
+                var flow1,flow2,flow3,flow4;
+                
+                    
+                $.get("http://183.195.152.29/abc/API/throughput",function(data,status){
+                     
+                        date.push(data.data[0].createdat);
+                        
+                        
+                        flow1= data.data[0].flow;
+
+                        _flow1.push(flow1);                        
+                            
+                        option.throughput.series[0].data[0].value =flow1;                  
+                        
+                         
+
+                        charts.throughput1.setOption(option.throughput,true);                       
+
+
+
+                        flow2= data.data[1].flow;
+                        _flow2.push(flow2);
+                            
+                        option.throughput.series[0].data[0].value =flow2;
+                            
+                        charts.throughput2.setOption(option.throughput,true);
+                       
+
+                        
+                        flow3= data.data[2].flow;
+                        _flow3.push(flow3);
+                            
+                        option.throughput.series[0].data[0].value =flow3;
+                            
+                        charts.throughput3.setOption(option.throughput,true);
+                          
+
+
+                        flow4=  data.data[3].flow;
+                        _flow4.push(flow4);    
+                        option.throughput.series[0].data[0].value =flow4;
+                            
+                        charts.throughput4.setOption(option.throughput,true);
+                        charts.throughputTime.setOption({
+                                xAxis: {
+                                    data: date
+                                },
+                                series: [{
+                                    
+                                    data: _flow1
+                                },
+                                {
+                                    
+                                    data: _flow2
+                                },
+                                {
+                                    
+                                    data: _flow3
+                                },
+                                {
+                                    
+                                    data: _flow4
+                                }]
+                            });         
+
+                       
+                    
+                  });             
+                  
+             
+            }
+
+   setInterval(throughputData, 250);
+
+
+
+
+
+
+
+                // var config = {
+                //     labelPosition: 'outside',
+                //     clockwise: true,
+                //     labelLineLen: 20,
+                //     labelLineLen2: 5
+                // };
+
+                // function update() {
+                //     chart.setOption({
+                //         series: [{
+                //             name: 'pie',
+                //             clockwise: config.clockwise,
+                //             label: {
+                //                 normal: {
+                //                     position: config.labelPosition
+                //                 }
+                //             },
+                //             labelLine: {
+                //                 length: config.labelLineLen,
+                //                 length2: config.labelLineLen2
+                //             }
+                //         }]
+                //     });
+                // }
+
+                // var gui = new dat.GUI();
+                // gui.add(config, 'clockwise')
+                //     .onChange(update);
+                // gui.add(config, 'labelPosition', ['inside', 'outside'])
+                //     .onChange(update);
+                // gui.add(config, 'labelLineLen', 0, 100)
+                //     .onChange(update);
+                // gui.add(config, 'labelLineLen2', 0, 100)
+                //     .onChange(update);
+
+
+
+
+            })
+
+        </script>
+    </body>
+</html>
